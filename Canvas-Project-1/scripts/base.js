@@ -1,5 +1,6 @@
 var context;
 var PlayerBullets = [];
+var Enemies = [];
 Number.prototype.clamp = function (min, max) {
     return Math.min(Math.max(this, min), max);
 };
@@ -23,12 +24,9 @@ var player = {
     y: 270,
     width: 32,
     height: 32,
-    draw: function (ctx) {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-        PlayerBullets.forEach(function(b){
-            b.draw();
-        });
+    draw: function () {
+        context.fillStyle = this.color;
+        context.fillRect(this.x, this.y, this.width, this.height);
     },
     midpoint: function () {
         return {
@@ -48,6 +46,15 @@ var player = {
 var stopFunction = function (id) {
     clearInterval(id);
 }
+var draw = function () {
+    player.draw();
+    PlayerBullets.forEach(function (b) {
+        b.draw();
+    });
+    Enemies.forEach(enemy => {
+        enemy.draw();
+    });
+}
 var update = function () {
     if (keydown.left) {
         player.x -= 5;
@@ -61,12 +68,22 @@ var update = function () {
         player.shoot();
     }
     player.x = player.x.clamp(0, 480 - player.width);
-    PlayerBullets.forEach((b) =>{
+    PlayerBullets.forEach((b) => {
         b.update();
     });
-    PlayerBullets.filter((b) =>{
+    PlayerBullets = PlayerBullets.filter((b) => {
         return b.active;
     });
+    Enemies.forEach((e) => {
+        e.update();
+    });
+    Enemies = Enemies.filter((e) => {
+        return e.active;
+    });
+    if(Math.random() < 0.015)
+    {
+        Enemies.push(Enemy());
+    }
 }
 //Constructor fo creating the bullet
 function bullet(I) {
@@ -90,6 +107,32 @@ function bullet(I) {
     I.update = function () {
         I.x += I.xVelocity;
         I.y += I.yVelocity;
+        I.active = I.active && I.inBounds();
+    }
+    return I;
+}
+
+function Enemy(I) {
+    I = I || {};
+    I.active = true;
+    I.x = 480 / 4 + Math.random() * (240);
+    I.y = 0;
+    I.xVelocity = 0;
+    I.yVelocity = 2;
+    I.width = 32;
+    I.height = 32;
+    I.color = "#A2B";
+    I.draw = function () {
+        context.fillStyle = this.color;
+        context.fillRect(this.x, this.y, this.width, this.height);
+    }
+    I.inBounds = function () {
+        return I.x >= 0 && I.x <= 480 && I.y >= 0 && I.y <= 320;
+    }
+    I.update = function () {
+        I.x += I.xVelocity;
+        I.y += 0.1;
+        I.active = I.active && I.inBounds();
     }
     return I;
 }
@@ -97,12 +140,11 @@ $(document).ready(function () {
     console.log("ready!");
     initialize();
     var canvas = document.getElementById("play");
-    var ctx = canvas.getContext("2d");
     context = canvas.getContext("2d");
     var intervalId = setInterval(function () {
-        ctx.clearRect(0, 0, 480, 320);
+        context.clearRect(0, 0, 480, 320);
         update();
-        player.draw(ctx);
+        draw();
     }, 1000 / 30);
     console.log(intervalId);
 });
