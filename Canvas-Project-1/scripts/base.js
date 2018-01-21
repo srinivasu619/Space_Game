@@ -24,9 +24,9 @@ var player = {
     y: 270,
     width: 32,
     height: 32,
+    sprite: Sprite("player"),
     draw: function () {
-        context.fillStyle = this.color;
-        context.fillRect(this.x, this.y, this.width, this.height);
+        this.sprite.draw(context,this.x,this.y);
     },
     midpoint: function () {
         return {
@@ -115,16 +115,16 @@ function bullet(I) {
 function Enemy(I) {
     I = I || {};
     I.active = true;
-    I.x = 480 / 4 + Math.random() * (240);
+    I.x = 480 / 4 + Math.random() * (300);
     I.y = 0;
     I.xVelocity = 0;
     I.yVelocity = 2;
     I.width = 32;
     I.height = 32;
     I.color = "#A2B";
+    I.sprite = Sprite("enemy");
     I.draw = function () {
-        context.fillStyle = this.color;
-        context.fillRect(this.x, this.y, this.width, this.height);
+        this.sprite.draw(context,this.x,this.y);
     }
     I.inBounds = function () {
         return I.x >= 0 && I.x <= 480 && I.y >= 0 && I.y <= 320;
