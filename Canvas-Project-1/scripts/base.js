@@ -115,7 +115,7 @@ function bullet(I) {
 function Enemy(I) {
     I = I || {};
     I.active = true;
-    I.x = 480 / 4 + Math.random() * (300);
+    I.x = 480 / 4 + Math.random() * (330);
     I.y = 0;
     I.xVelocity = 0;
     I.yVelocity = 2;
