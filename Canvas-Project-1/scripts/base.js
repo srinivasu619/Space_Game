@@ -1,10 +1,42 @@
 var context;
 var PlayerBullets = [];
 var Enemies = [];
+var score = 0;
+var shieldStrength = 3;
 Number.prototype.clamp = function (min, max) {
     return Math.min(Math.max(this, min), max);
 };
 // return key name
+function collides(a, b) {
+    return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+}
+
+function handleCollisions() {
+    PlayerBullets.forEach(function (bullet) {
+        Enemies.forEach(function (enemy) {
+            if (collides(enemy, bullet)) {
+                enemy.explode();
+                bullet.active = false;
+                score += 10;
+                console.log(score);
+            }
+        })
+    });
+    Enemies.forEach(function (enemy) {
+        if (collides(enemy, player)) {
+            enemy.explode();
+            player.explode();
+        }
+    });
+    Enemies.forEach(function (enemy) {
+        if (enemy.y+enemy.height >= 250) {
+            enemy.explode();
+            shieldStrength = shieldStrength -1;
+            if(shieldStrength == 2)
+                player.explode();
+        }
+    });
+}
 var keyName = function (event) {
     return jQuery.hotkeys.specialKeys[event.which] || String.fromCharCode(event.which).toLowerCase();
 }
@@ -18,6 +50,15 @@ var initialize = function () {
         keydown[keyName(event)] = false;
     });
 }
+var shield = {
+    draw: function () {
+        context.beginPath();
+        context.strokeStyle="#FF0000";
+        context.moveTo(0, 250);
+        context.lineTo(480,250);
+        context.stroke();
+    }
+}
 var player = {
     color: "#00A",
     x: 220,
@@ -26,7 +67,7 @@ var player = {
     height: 32,
     sprite: Sprite("player"),
     draw: function () {
-        this.sprite.draw(context,this.x,this.y);
+        this.sprite.draw(context, this.x, this.y);
     },
     midpoint: function () {
         return {
@@ -41,13 +82,18 @@ var player = {
             x: bulletPos.x,
             y: bulletPos.y
         }));
+    },
+    explode: function () {
+        stopFunction(window.interval_id);
     }
 }
 var stopFunction = function (id) {
+    console.log("game loop stopped");
     clearInterval(id);
 }
 var draw = function () {
     player.draw();
+    shield.draw();
     PlayerBullets.forEach(function (b) {
         b.draw();
     });
@@ -68,6 +114,7 @@ var update = function () {
         player.shoot();
     }
     player.x = player.x.clamp(0, 480 - player.width);
+    handleCollisions();
     PlayerBullets.forEach((b) => {
         b.update();
     });
@@ -80,8 +127,7 @@ var update = function () {
     Enemies = Enemies.filter((e) => {
         return e.active;
     });
-    if(Math.random() < 0.015)
-    {
+    if (Math.random() < 0.015) {
         Enemies.push(Enemy());
     }
 }
@@ -124,10 +170,13 @@ function Enemy(I) {
     I.color = "#A2B";
     I.sprite = Sprite("enemy");
     I.draw = function () {
-        this.sprite.draw(context,this.x,this.y);
+        this.sprite.draw(context, this.x, this.y);
     }
     I.inBounds = function () {
         return I.x >= 0 && I.x <= 480 && I.y >= 0 && I.y <= 320;
+    }
+    I.explode = function () {
+        this.active = false;
     }
     I.update = function () {
         I.x += I.xVelocity;
@@ -145,6 +194,7 @@ $(document).ready(function () {
         context.clearRect(0, 0, 480, 320);
         update();
         draw();
-    }, 1000 / 30);
+    }, 1000 / 25);
+    window.interval_id = intervalId;
     console.log(intervalId);
 });
