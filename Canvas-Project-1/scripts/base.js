@@ -29,10 +29,10 @@ function handleCollisions() {
         }
     });
     Enemies.forEach(function (enemy) {
-        if (enemy.y+enemy.height >= 250) {
+        if (enemy.y + enemy.height >= 250) {
             enemy.explode();
-            shieldStrength = shieldStrength -1;
-            if(shieldStrength == 2)
+            shieldStrength = shieldStrength - 1;
+            if (shieldStrength == 2)
                 player.explode();
         }
     });
@@ -53,9 +53,9 @@ var initialize = function () {
 var shield = {
     draw: function () {
         context.beginPath();
-        context.strokeStyle="#FF0000";
+        context.strokeStyle = "#FF0000";
         context.moveTo(0, 250);
-        context.lineTo(480,250);
+        context.lineTo(480, 250);
         context.stroke();
     }
 }
@@ -65,7 +65,7 @@ var player = {
     y: 270,
     width: 32,
     height: 32,
-    sprite: Sprite("player"),
+    sprite: Sprite("jet"),
     draw: function () {
         this.sprite.draw(context, this.x, this.y);
     },
@@ -138,7 +138,7 @@ function bullet(I) {
     I.yVelocity = -I.speed;
     I.width = 3;
     I.height = 3;
-    I.color = "#000";
+    I.color = "#fff";
 
     // checking bounds of the bullet
     I.inBounds = function () {
@@ -161,14 +161,15 @@ function bullet(I) {
 function Enemy(I) {
     I = I || {};
     I.active = true;
-    I.x = 480 / 4 + Math.random() * (330);
+    I.x = 480 / 4 + Math.random() * (200);
     I.y = 0;
     I.xVelocity = 0;
     I.yVelocity = 2;
     I.width = 32;
     I.height = 32;
     I.color = "#A2B";
-    I.sprite = Sprite("enemy");
+    I.age = Math.floor(Math.random() * 128);
+    I.sprite = Sprite("ufo");
     I.draw = function () {
         this.sprite.draw(context, this.x, this.y);
     }
@@ -181,6 +182,8 @@ function Enemy(I) {
     I.update = function () {
         I.x += I.xVelocity;
         I.y += 0.1;
+        I.xVelocity = 3 * Math.sin(I.age * Math.PI / 64);
+        I.age++;
         I.active = I.active && I.inBounds();
     }
     return I;
@@ -192,6 +195,8 @@ $(document).ready(function () {
     context = canvas.getContext("2d");
     var intervalId = setInterval(function () {
         context.clearRect(0, 0, 480, 320);
+        context.fillStyle = "#000";
+        context.fillRect(0, 0, 480, 320);
         update();
         draw();
     }, 1000 / 25);
