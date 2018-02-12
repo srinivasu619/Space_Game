@@ -127,7 +127,7 @@ var update = function () {
     Enemies = Enemies.filter((e) => {
         return e.active;
     });
-    if (Math.random() < 0.015) {
+    if (Math.random() < 0.025) {
         Enemies.push(Enemy());
     }
 }
@@ -161,7 +161,7 @@ function bullet(I) {
 function Enemy(I) {
     I = I || {};
     I.active = true;
-    I.x = 480 / 4 + Math.random() * (200);
+    I.x = 480 / 4 + Math.random() * (250);
     I.y = 0;
     I.xVelocity = 0;
     I.yVelocity = 2;
@@ -181,7 +181,7 @@ function Enemy(I) {
     }
     I.update = function () {
         I.x += I.xVelocity;
-        I.y += 0.1;
+        I.y += I.yVelocity;
         I.xVelocity = 3 * Math.sin(I.age * Math.PI / 64);
         I.age++;
         I.active = I.active && I.inBounds();
