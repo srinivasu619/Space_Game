@@ -22,23 +22,23 @@
 .mainContainer{
     height: 320px;
     width: 800px;
-    display: flex;
     border: 1px solid;
 }
 .mainContainer > .menu{
-    width: 200px;
-    height: 320px;
+    height: 100px;
 }
 .menu > .heading {
     position: relative;
-    height: 150px;
-    width: 150px;
+    height: 100px;
+    width: 100px;
     border-radius: 50%;
     flex-direction: column;
     border: 1px solid;
+    background: #3d2561;
+    margin: 0 auto;
 }
 .menu > .heading > h1{
     font-family: 'Abel', sans-serif;
-    color:#3d2561;
-    font-size: 32px;
+    color:#ffda79;
+    font-size: 24px;
 }
