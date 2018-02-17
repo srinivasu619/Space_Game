@@ -20,12 +20,9 @@
     align-items: center;
 }
 .mainContainer{
-    height: 320px;
+    height: 500px;
     width: 800px;
     border: 1px solid;
-}
-.mainContainer > .menu{
-    height: 100px;
 }
 .menu > .heading {
     position: relative;
@@ -41,4 +38,7 @@
     font-family: 'Abel', sans-serif;
     color:#ffda79;
     font-size: 24px;
+}
+.heading > .gamebar{
+    height: 70px;
 }
