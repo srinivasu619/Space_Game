@@ -1,44 +1,86 @@
-*{
+* {
     margin: 0;
     padding: 0;
+    font-family: 'Abel', Arial, Helvetica, sans-serif;
 }
-@font-face {
-    font-family: 'Canter Bold';
-    src: url('./fonts/Canter Bold.otf') format('truetype');
-}
-@font-face {
-    font-family: 'Canter Bold Strips';
-    src: url('./fonts/Canter Bold Strips.otf') format('truetype');
-}
-.center{
+
+.center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.vcenter{
+
+.vcenter {
     display: flex;
     align-items: center;
 }
-.mainContainer{
+
+.mainContainer {
     height: 500px;
-    width: 800px;
-    border: 1px solid;
-}
-.menu > .heading {
-    position: relative;
-    height: 100px;
-    width: 100px;
-    border-radius: 50%;
-    flex-direction: column;
-    border: 1px solid;
-    background: #3d2561;
+    width: 480px;
     margin: 0 auto;
+    letter-spacing: 2px;
+    margin-top: 30px;
 }
-.menu > .heading > h1{
-    font-family: 'Abel', sans-serif;
-    color:#ffda79;
-    font-size: 24px;
-}
-.heading > .gamebar{
+
+.heading {
     height: 70px;
+}
+
+.heading>img {
+    height: 50px;
+}
+
+.heading>h1 {
+    margin-left: 50px;
+}
+
+.gamebar {
+    height: 50px;
+    margin: 0 auto;
+    margin-top: 20px;
+    justify-content: space-between;
+}
+
+.enemiesHit {
+    height: 50px;
+    margin-bottom: 20px;
+}
+
+.enemiesHit>.stats {
+    width: 80px;
+    justify-content: space-around;
+    margin-left: 35px;
+}
+
+.stats>img {
+    height: 25px;
+}
+
+#run {
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 2px solid;
+}
+
+.instructions {
+    height: 150px;
+    margin-top: 20px;
+}
+
+.controls {
+    margin: 12px 0;
+}
+
+.controls>.buttonInfo {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.strength {
+    display: flex;
+}
+
+#shieldStrength {
+    color: #2ecc71;
 }

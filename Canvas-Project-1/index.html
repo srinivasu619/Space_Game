@@ -2,35 +2,61 @@
 <html>
 
 <head>
-	<title></title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script src="./scripts/jquery.hotkeys.js"></script>
-	<script src="./scripts/sprite.js"></script>
+	<title>Space Game</title>
 	<link rel="stylesheet" href="./styles/styles.css">
 	<link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+	<link rel="shortcut icon" type="image/png" href="./images/spaceicon.ico">
 </head>
 
 <body>
 	<div class="mainContainer">
 		<div class="menu">
-			<div class="heading center">
-				<h1 text="SPACE">SPACE</h1>
-				<h1>GAME</h1>
+			<div class="heading vcenter">
+				<img src="./images/spacelogo.png" alt="">
+				<h1 text="SPACE">SPACE GAME</h1>
 			</div>
 			<div class="gamebar vcenter">
-				<div class="play">PLAY</div>
-				<div class="Score">
-					<h3>SCORE : </h3>
-					<div class="val"></div>
+				<h4 id="run">PLAY</h4>
+				<div class="Score center">
+					<h3>SCORE : &nbsp;&nbsp;</h3>
+					<h3 id="Scoreval"></h3>
 				</div>
-				<div class="highScore">
-					<h3>HIGHSCORE : </h3>
-					<div class="val"></div>
+				<div class="highScore center">
+					<h3>HIGHSCORE : &nbsp;&nbsp;</h3>
+					<h3 id="highScoreval"></h3>
+				</div>
+			</div>
+			<div class="enemiesHit vcenter">
+				<h3>Enemy Hits</h3>
+				<div class="stats vcenter">
+					<img src="./images/smallenemy.png" alt="">
+					<h4 id="smallEnemyHit">0</h4>
+				</div>
+				<div class="stats vcenter">
+					<img src="./images/bigenemy.png" alt="">
+					<h4 id="bigEnemyHit">0</h4>
 				</div>
 			</div>
 		</div>
 		<canvas height="320" width="480" id="play"></canvas>
+		<div class="instructions">
+			<h4>INSTRUCTIONS</h4>
+			<div class="controls">
+				<div class="buttonInfo">Left Arrow - Move Left</div>
+				<div class="buttonInfo">Right Arrow - Move Right</div>
+				<div class="buttonInfo">Space Bar - Shoot</div>
+			</div>
+			<div class="strength">
+				<h5>SHIELD STRENGTH &nbsp;&nbsp;</h5>
+				<h5 id="shieldStrength">FULL</h5>
+			</div>
+		</div>
 	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="./scripts/jquery-3.3.1.js"></script>
+	<script src="./scripts/jquery.hotkeys.js"></script>
+	<script src="./scripts/sprite.js"></script>
+	<script src="./scripts/gameobjects.js"></script>
 	<script type="text/javascript" src="./scripts/base.js"></script>
 </body>
 

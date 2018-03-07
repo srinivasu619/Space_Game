@@ -3,6 +3,10 @@ var PlayerBullets = [];
 var Enemies = [];
 var score = 0;
 var shieldStrength = 3;
+var highScore = 0;
+var n = 1;
+var smallEnemydied = 0;
+var bigEnemydied = 0;
 Number.prototype.clamp = function (min, max) {
     return Math.min(Math.max(this, min), max);
 };
@@ -10,18 +14,36 @@ Number.prototype.clamp = function (min, max) {
 function collides(a, b) {
     return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
-
+// handles collision between objects
 function handleCollisions() {
-    PlayerBullets.forEach(function (bullet) {
-        Enemies.forEach(function (enemy) {
-            if (collides(enemy, bullet)) {
-                enemy.explode();
-                bullet.active = false;
-                score += 10;
-                console.log(score);
-            }
-        })
-    });
+    PlayerBullets
+        .forEach(function (bullet) {
+            Enemies
+                .forEach(function (enemy) {
+                    if (collides(enemy, bullet)) {
+                        bullet.active = false;
+                        if (enemy.active) {
+                            if (enemy.type == "bigenemy") {
+                                score += 20;
+                                bigEnemydied++;
+                                document
+                                    .getElementById('bigEnemyHit')
+                                    .innerText = bigEnemydied;
+                            } else {
+                                score += 10;
+                                smallEnemydied++;
+                                document
+                                    .getElementById('smallEnemyHit')
+                                    .innerText = smallEnemydied;
+                            }
+                            document
+                                .getElementById("Scoreval")
+                                .innerText = "" + score;
+                            enemy.explode();
+                        }
+                    }
+                })
+        });
     Enemies.forEach(function (enemy) {
         if (collides(enemy, player)) {
             enemy.explode();
@@ -32,15 +54,28 @@ function handleCollisions() {
         if (enemy.y + enemy.height >= 250) {
             enemy.explode();
             shieldStrength = shieldStrength - 1;
-            if (shieldStrength == 2)
+            var strength = document.getElementById('shieldStrength');
+            if (shieldStrength == 2) {
+                strength.innerText = "HALF";
+                strength.style.color = "#e67e22";
+            }
+            if (shieldStrength == 1) {
+                strength.innerText = "LOW";
+                strength.style.color = "#e74c3c";
+            }
+            if (shieldStrength == 0) {
+                strength.innerText = "EMPTY";
+                strength.style.color = "#e74c3c";
                 player.explode();
+            }
         }
     });
 }
 var keyName = function (event) {
-    return jQuery.hotkeys.specialKeys[event.which] || String.fromCharCode(event.which).toLowerCase();
+    return jQuery.hotkeys.specialKeys[event.which] || String
+        .fromCharCode(event.which)
+        .toLowerCase();
 }
-// key binding function
 var initialize = function () {
     window.keydown = {};
     $(document).bind("keydown", function (event) {
@@ -49,48 +84,42 @@ var initialize = function () {
     $(document).bind("keyup", function (event) {
         keydown[keyName(event)] = false;
     });
+    context.clearRect(0, 0, 480, 320);
+    context.fillStyle = "#000";
+    context.fillRect(0, 0, 480, 320);
+    document
+        .getElementById("highScoreval")
+        .innerText = "" + 0;
+    document
+        .getElementById("Scoreval")
+        .innerText = "" + 0;
+    $("#run").click(function () {
+        run();
+    })
 }
-var shield = {
-    draw: function () {
-        context.beginPath();
-        context.strokeStyle = "#FF0000";
-        context.moveTo(0, 250);
-        context.lineTo(480, 250);
-        context.stroke();
-    }
-}
-var player = {
-    color: "#00A",
-    x: 220,
-    y: 270,
-    width: 32,
-    height: 32,
-    sprite: Sprite("jet"),
-    draw: function () {
-        this.sprite.draw(context, this.x, this.y);
-    },
-    midpoint: function () {
-        return {
-            x: this.x + this.width / 2,
-            y: this.y + this.height / 2
-        }
-    },
-    shoot: function () {
-        var bulletPos = this.midpoint();
-        PlayerBullets.push(bullet({
-            speed: 5,
-            x: bulletPos.x,
-            y: bulletPos.y
-        }));
-    },
-    explode: function () {
-        stopFunction(window.interval_id);
-    }
-}
+//stop the main game loop
 var stopFunction = function (id) {
     console.log("game loop stopped");
+    if (score > highScore)
+        highScore = score;
+    document
+        .getElementById("highScoreval")
+        .innerText = "" + highScore;
+    document
+        .getElementById("run")
+        .innerText = "RESTART"
+    document
+        .getElementById("run")
+        .style
+        .display = "block";
+    PlayerBullets = [];
+    Enemies = [];
+    context.clearRect(0, 0, 480, 320);
+    context.fillStyle = "#000";
+    context.fillRect(0, 0, 480, 320);
     clearInterval(id);
 }
+// main game drawing function
 var draw = function () {
     player.draw();
     shield.draw();
@@ -101,6 +130,7 @@ var draw = function () {
         enemy.draw();
     });
 }
+// main game update function
 var update = function () {
     if (keydown.left) {
         player.x -= 5;
@@ -113,86 +143,52 @@ var update = function () {
     if (keydown.space) {
         player.shoot();
     }
-    player.x = player.x.clamp(0, 480 - player.width);
+    player.x = player
+        .x
+        .clamp(0, 480 - player.width);
     handleCollisions();
-    PlayerBullets.forEach((b) => {
-        b.update();
-    });
     PlayerBullets = PlayerBullets.filter((b) => {
         return b.active;
     });
-    Enemies.forEach((e) => {
-        e.update();
+    PlayerBullets.forEach((b) => {
+        b.update();
     });
     Enemies = Enemies.filter((e) => {
         return e.active;
     });
+    Enemies.forEach((e) => {
+        e.update();
+    });
     if (Math.random() < 0.025) {
         Enemies.push(Enemy());
     }
+    if (score >= n * 100) {
+        n++;
+        Enemies.push(BIGEnemy());
+    }
 }
-//Constructor fo creating the bullet
-function bullet(I) {
-    I.active = true;
-    I.xVelocity = 0;
-    I.yVelocity = -I.speed;
-    I.width = 3;
-    I.height = 3;
-    I.color = "#fff";
-
-    // checking bounds of the bullet
-    I.inBounds = function () {
-        return I.x >= 0 && I.x <= 480 && I.y >= 0 && I.y <= 320;
-    }
-
-    // draw function for the bullet
-    I.draw = function () {
-        context.fillStyle = this.color;
-        context.fillRect(this.x, this.y, this.width, this.height);
-    }
-    I.update = function () {
-        I.x += I.xVelocity;
-        I.y += I.yVelocity;
-        I.active = I.active && I.inBounds();
-    }
-    return I;
-}
-
-function Enemy(I) {
-    I = I || {};
-    I.active = true;
-    I.x = 480 / 4 + Math.random() * (250);
-    I.y = 0;
-    I.xVelocity = 0;
-    I.yVelocity = 2;
-    I.width = 32;
-    I.height = 32;
-    I.color = "#A2B";
-    I.age = Math.floor(Math.random() * 128);
-    I.sprite = Sprite("ufo");
-    I.draw = function () {
-        this.sprite.draw(context, this.x, this.y);
-    }
-    I.inBounds = function () {
-        return I.x >= 0 && I.x <= 480 && I.y >= 0 && I.y <= 320;
-    }
-    I.explode = function () {
-        this.active = false;
-    }
-    I.update = function () {
-        I.x += I.xVelocity;
-        I.y += I.yVelocity;
-        I.xVelocity = 3 * Math.sin(I.age * Math.PI / 64);
-        I.age++;
-        I.active = I.active && I.inBounds();
-    }
-    return I;
-}
-$(document).ready(function () {
-    console.log("ready!");
-    initialize();
-    var canvas = document.getElementById("play");
-    context = canvas.getContext("2d");
+// to start the game loop
+function run() {
+    document
+        .getElementById("Scoreval")
+        .innerText = "" + 0;
+    PlayerBullets = [];
+    Enemies = [];
+    shieldStrength = 3;
+    score = 0;
+    n = 1;
+    smallEnemydied = 0;
+    bigEnemydied = 0;
+    player.reset();
+    var strength = document.getElementById('shieldStrength');
+    strength.innerText = "FULL";
+    strength.style.color = "#2ecc71";
+    document
+        .getElementById('bigEnemyHit')
+        .innerText = bigEnemydied;
+    document
+        .getElementById('smallEnemyHit')
+        .innerText = smallEnemydied;
     var intervalId = setInterval(function () {
         context.clearRect(0, 0, 480, 320);
         context.fillStyle = "#000";
@@ -201,5 +197,15 @@ $(document).ready(function () {
         draw();
     }, 1000 / 25);
     window.interval_id = intervalId;
-    console.log(intervalId);
-});
+    document
+        .getElementById("run")
+        .style
+        .display = "none";
+}
+$(document)
+    .ready(function () {
+        console.log("ready!");
+        var canvas = document.getElementById("play");
+        context = canvas.getContext("2d");
+        initialize();
+    });
